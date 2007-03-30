@@ -25,15 +25,13 @@ Stii has written a [detailed installation guide with screenshots](http://stii.za
 1. Upload `linkedin_hresume.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin in the Wordpress Admin
 1. In the Wordpress Admin, create a new page containing:<br />
-   `<!--LinkedIn hResume-->`;
+   `&lt;!--LinkedIn hResume--&gt;`;
 
-== Screenshots ==
+== Live Demos ==
 
 [My resume](http://brad.touesnard.com/documents/resume/) is a live demonstration of LinkedIn hResume 
 for Wordpress in action. [Send me](http://brad.touesnard.com/contact/) your resume and I will post it 
 here as a demo.
-
-<h4>Live Demos</h4>
 
 * [Stiaan Pretorius](http://stii.za.net/my-resume/)
 * [Brad Touesnard](http://brad.touesnard.com/documents/resume/)
