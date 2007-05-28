@@ -34,6 +34,7 @@ for Wordpress in action. [Send me](http://brad.touesnard.com/contact/) your resu
 here as a demo.
 
 * [Stiaan Pretorius](http://stii.za.net/my-resume/)
+* [Aadesh Mistry](http://www.idizyn.com/blog/resume/)
 * [Brad Touesnard](http://brad.touesnard.com/documents/resume/)
 
 == Customization ==
