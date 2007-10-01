@@ -88,8 +88,11 @@ function lnhr_stripout_hresume($content) {
 	// Just grab the hResume part minus some extra LinkedIn junk
 	// Kind of lazy, but maybe do some parsing in another version
 	$hresume = strstr($content, '<div class="hresume">');
-	$hresume = substr($hresume, 0, strpos($hresume, '<div id="contact-settings">'));
-	$hresume .= '</div>';
+	$pos = strpos($hresume, '<div id="contact-settings">');
+	if ($pos !== false) {
+		$hresume = substr($hresume, 0, $pos);
+		$hresume .= '</div>';
+	}
 
 	// Remove any Javascript
 	$hresume = preg_replace('/<[ \n\r]*script[^>]*>.*<[ \n\r]*\/script[^>]*>/si', '', $hresume);
