@@ -26,7 +26,7 @@ Template Name: Resume
 
 <body>
 
-<div id="main">
+<div id="lnhr-main">
 
 	<?php $i = 0; if (have_posts()) : while (have_posts()) : the_post(); ?>
 

@@ -95,11 +95,12 @@ ul.vcalendar li.vevent {
 
 /* ID Selectors */
 
-#main {
+#lnhr-main {
 	margin: 2em 3% 4em 3%;
 }
 
-#overview {
+#overview,
+div.profile-header div.actions {
 	display: none;
 }
 
