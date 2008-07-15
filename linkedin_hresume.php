@@ -51,29 +51,12 @@ function lnhr_get_linkedin_page() {
 	$page = $matches[2];
 
 	// Request the LinkedIn page
-	$errno = 0;
-	$errstr = '';
-	$fp = @fsockopen($server, 80, $errno, $errstr, 30);
-	if (!$fp) {
-		return "<h1>Error retrieving resume from LinkedIn</h1>
-			$server<br />$page<br />
-			<p><b>Details:</b> $errstr ($errno)</p>";
-	} 
+	if(function_exists('wp_remote_fopen'))
+    {
+        $data = wp_remote_fopen($linkedin_url);
+    }
 	else {
-		$out = "GET $page HTTP/1.1\r\n";
-		$out .= "Host: $server\r\n";
-		$out .= "Connection: Close\r\n\r\n";
-
-		$response = '';
-		fwrite($fp, $out);
-		while (!feof($fp)) {
-			$response .= fgets($fp, 128);
-		}
-		fclose($fp);
-
-		$response = split("\r\n\r\n", $response);
-		$headers = $response[0];
-		$data = $response[1];
+		$data = "Sorry, your version of Wordpress does not support the 'wp_remote_fopen' function. Please upgrade your version of Wordpress.";
 	}
 	
 	// If Wordpress caching is enabled, cache the content

@@ -3,7 +3,7 @@ Contributors: bradt
 Tags: linkedin, resume, hresume, microformat, cv
 Requires at least: 2.0.0
 Tested up to: 2.1
-Stable tag: trunk
+Stable tag: 0.1.1 
 
 Include your LinkedIn resume in any Wordpress page and style it how you like.
 
@@ -53,3 +53,6 @@ in the `extras` folder.
 
 * 0.1 - 2007-02-27<br />
   First release.
+* 0.1.1 - 2007-10-01<br />
+  Bug Fix: Now works even if the public profile does not display contact settings.<br />
+  Fixed some CSS issues
