@@ -5,7 +5,7 @@ Plugin URI: http://brad.touesnard.com/projects/wordpress/linkedin-hresume/
 Description: LinkedIn hResume grabs the Microformated hResume block from your LinkedIn public profile page allowing you to add it to any page and apply your own styles to it. It currently works with WordPress 2.0+.
 Author: Brad Touesnard
 Author URI: http://brad.touesnard.com/
-Version: 0.1
+Version: 0.2
 */
 
 // Your public LinkedIn profile URL 
@@ -24,15 +24,27 @@ INSTALLATION
 /* Content filter callback function to replace the 
    page comment with the hResume */
 function lnhr_callback($content)
-{	
-	if(!preg_match('/<!--LinkedIn hResume-->/', $content)) {
+{
+	global $linkedin_url, $lnhr_your_name;
+	
+	if(!preg_match('@<!--LinkedIn hResume(.*)-->@', $content, $matches)) {
 		return $content;
+	}
+
+	if ($matches[1]) {
+		list($name, $url) = split(',', $matches[1]);
+		if ($url) {
+			$linkedin_url = trim($url);
+		}
+		if ($name) {
+			$lnhr_your_name = trim($name);
+		}
 	}
 	
 	$hresume = lnhr_get_linkedin_page();
 	$hresume = lnhr_stripout_hresume($hresume);
 	
-	return str_replace('<!--LinkedIn hResume-->', $hresume, $content);
+	return str_replace($matches[0], $hresume, $content);
 }
 
 function lnhr_get_linkedin_page() {
