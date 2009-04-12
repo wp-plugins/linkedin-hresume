@@ -10,57 +10,59 @@ Version: 0.2
 
 // Your public LinkedIn profile URL 
 $linkedin_url = 'http://www.linkedin.com/in/bradt';
-$lnhr_your_name = 'Brad Touesnard';
+$lnhr_enable_cache = false;
 
-/* 
-INSTALLATION
-1. Update the URL above with your LinkedIn profile URL
-2. Upload this file to your Wordpress plugins directory
-3. Activate the plugin in the Wordpress Admin
-4. In the Wordpress Admin, create a new page containing:
-   <!--LinkedIn hResume-->
-*/
+/* INSTALLATION
+ * Please see the readme.txt file for installation details.
+ */
 
 /* Content filter callback function to replace the 
    page comment with the hResume */
 function lnhr_callback($content)
 {
-	global $linkedin_url, $lnhr_your_name;
+	global $linkedin_url, $lnhr_enable_cache, $wp_filter;
 	
-	if(!preg_match('@<!--LinkedIn hResume(.*)-->@', $content, $matches)) {
+	if(!preg_match('@(?:<p>)?<!--LinkedIn hResume(.*)-->(?:</p>)?@', $content, $matches)) {
 		return $content;
 	}
 
 	if ($matches[1]) {
-		list($name, $url) = split(',', $matches[1]);
+		list($url, $cache) = split(',', $matches[1]);
 		if ($url) {
 			$linkedin_url = trim($url);
 		}
-		if ($name) {
-			$lnhr_your_name = trim($name);
+		if ($cache == 'true' || $cache == '1') {
+			$lnhr_enable_cache = true;
 		}
 	}
 	
-	$hresume = lnhr_get_linkedin_page();
-	$hresume = lnhr_stripout_hresume($hresume);
+	$hresume = '';
+	if ($lnhr_enable_cache) {
+		$cache = get_option('lnhr_cache');
+		if ($cache !== false) {
+			list($expiry, $data) = $cache;
+			if ($expiry > time()) {
+				$hresume = $data;
+			}
+		}
+	}
+
+	if (!$hresume) {
+		$hresume = lnhr_get_linkedin_page();
+		$hresume = lnhr_stripout_hresume($hresume);
+
+		$hresume = balanceTags($hresume, true);
+	
+		if ($lnhr_enable_cache) {
+			update_option('lnhr_cache', array(time()+21600, $hresume));
+		}
+	}
 	
 	return str_replace($matches[0], $hresume, $content);
 }
 
 function lnhr_get_linkedin_page() {
 	global $linkedin_url;
-	
-	// If Wordpress caching is enabled, get content from the cache
-	$data = wp_cache_get('lnhr_data');
-	if ($data !== false) {
-		return $data;
-	}
-
-	// Split up the URL
-	$matches = array();
-	preg_match('/^http:\/\/([^\/]+)(\/.*)$/', $linkedin_url, $matches);
-	$server = $matches[1];
-	$page = $matches[2];
 
 	// Request the LinkedIn page
 	if(function_exists('wp_remote_fopen'))
@@ -71,15 +73,24 @@ function lnhr_get_linkedin_page() {
 		$data = "Sorry, your version of Wordpress does not support the 'wp_remote_fopen' function. Please upgrade your version of Wordpress.";
 	}
 	
-	// If Wordpress caching is enabled, cache the content
-	wp_cache_set('lnhr_data', $data, '', 3600);
-	
 	return $data;
 }
 
-function lnhr_stripout_hresume($content) {
-	global $lnhr_your_name;
+function lnhr_format_block($matches) {
+	$desc = $matches[2];
 	
+	$desc = strip_tags($desc);
+	$desc = Markdown($desc);
+		
+	// Make links clickable
+	$desc = preg_replace('@(http:\/\/[^\s<>]+)@i', '<a href="$1">$1</a>', $desc);
+	
+	$desc = wpautop($desc);
+	
+	return '<div class="' . $matches[1] . '">' . $desc . '</div>';
+}
+
+function lnhr_stripout_hresume($content) {
 	// Just grab the hResume part minus some extra LinkedIn junk
 	// Kind of lazy, but maybe do some parsing in another version
 	$hresume = strstr($content, '<div class="hresume">');
@@ -92,23 +103,31 @@ function lnhr_stripout_hresume($content) {
 	// Remove any Javascript
 	$hresume = preg_replace('/<[ \n\r]*script[^>]*>.*<[ \n\r]*\/script[^>]*>/si', '', $hresume);
 	
-	// Convert wiki style formatting to XHTML
-	$hresume = preg_replace("/(<br>\s*){2,}\*[ ]([^\n\r]*)(\s*<br>)/si", "<ul>\n<li>$2</li>", $hresume);
-	$hresume = preg_replace("/\*[ ]([^\n\r]*)(\s*<br>)/si", "<li>$1</li>", $hresume);
-	$hresume = preg_replace("/\*[ ]([^\n\r]*)(\s*(<\/p>|<\/dd>))/si", "<li>$1</li>\n</ul>\n$2", $hresume);
-	$hresume = preg_replace("/(<\/li>)\s*<br>/si", "$1\n</ul>", $hresume);
-	
-	// Make links clickable
-	$hresume = preg_replace('/([^"\'])(http:\/\/[^\s]+)([^"\'])/i', '$1<a href="$2">$2</a>$3', $hresume);
+	// This is the path to markdown.php
+	if ( !defined('AUTOMATTIC_README_MARKDOWN') )
+		define('AUTOMATTIC_README_MARKDOWN', dirname(__FILE__) . '/markdown.php');
+
+	if ( !function_exists('Markdown') )
+		require( AUTOMATTIC_README_MARKDOWN );
+
+	$hresume = preg_replace_callback('@<p class="(description)">(.*?)</p>@s', 'lnhr_format_block', $hresume);
+	$hresume = preg_replace_callback('@<p class="(skills)">(.*?)</p>@s', 'lnhr_format_block', $hresume);
 	
 	// Markup abbrivations INCOMPLETE
 	$hresume = preg_replace('/([^a-zA-Z0-9])(CVS)([^a-zA-Z0-9])/', '$1<abbr title="Concurrent Versioning System">$2</abbr>$3', $hresume);
 	
 	// Convert LinkedIn tags to XHTML
 	$hresume = preg_replace('/<\s*br\s*>/si', '<br />', $hresume);
-	
+
 	// Why does LinkedIn repeat your name so much on the same page?
-	$hresume = preg_replace('/'.$lnhr_your_name.'&#8217;s /si', '', $hresume);
+	if (preg_match('@<span class="given-name">([^<]+)</span>@', $hresume, $matches)) {
+		$name = $matches[1];
+		$matches = array();
+		if (preg_match('@<span class="family-name">([^<]+)</span>@', $hresume, $matches)) {
+			$name = $name . ' ' . $matches[1];
+			$hresume = str_ireplace($name . '&#8217;s ', '', $hresume);
+		}
+	}
 	
 	return $hresume;
 }
