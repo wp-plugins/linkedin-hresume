@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: LinkedIn hResume
-Plugin URI: http://brad.touesnard.com/projects/wordpress/linkedin-hresume/
+Plugin URI: http://wordpress.org/extend/plugins/linkedin-hresume/
 Description: LinkedIn hResume grabs the Microformated hResume block from your LinkedIn public profile page allowing you to add it to any page and apply your own styles to it.
 Author: Brad Touesnard
 Author URI: http://brad.touesnard.com/
