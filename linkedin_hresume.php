@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/linkedin-hresume/
 Description: LinkedIn hResume grabs the Microformated hResume block from your LinkedIn public profile page allowing you to add it to any page and apply your own styles to it.
 Author: Brad Touesnard
 Author URI: http://brad.touesnard.com/
-Version: 0.2
+Version: 0.3
 */
 
 // Your public LinkedIn profile URL 
@@ -16,13 +16,28 @@ $lnhr_enable_cache = false;
  * Please see the readme.txt file for installation details.
  */
 
-/* Content filter callback function to replace the 
-   page comment with the hResume */
+function lnhr_shortcode($atts) {
+	global $linkedin_url, $lnhr_enable_cache;
+
+	extract(shortcode_atts(array(
+		'url' => $linkedin_url,
+		'caching' => $lnhr_enable_cache,
+	), $atts));
+	
+	$caching = lnhr_is_caching($caching);
+	
+	$lnhr_enable_cache = $caching;
+	$linkedin_url = $url;
+
+	return lnhr_get_hresume($url, $caching);
+}
+
+/* Backward compatibility: Support for comment code */
 function lnhr_callback($content)
 {
-	global $linkedin_url, $lnhr_enable_cache, $wp_filter;
+	global $linkedin_url, $lnhr_enable_cache;
 	
-	if(!preg_match('@(?:<p>)?<!--LinkedIn hResume(.*)-->(?:</p>)?@', $content, $matches)) {
+	if(!preg_match('@(?:<p>)?(?:<|&lt;)!(?:--|&#8211;)LinkedIn hResume(.*)(?:--|&#8211;)(?:>|&gt;)(?:</p>)?@', $content, $matches)) {
 		return $content;
 	}
 
@@ -31,43 +46,51 @@ function lnhr_callback($content)
 		if ($url) {
 			$linkedin_url = trim($url);
 		}
-		if ($cache == 'true' || $cache == '1') {
-			$lnhr_enable_cache = true;
-		}
+		$lnhr_enable_cache = lnhr_is_caching($cache);
 	}
 	
+	$hresume = lnhr_get_hresume($linkedin_url, $lnhr_enable_cache);
+
+	return str_replace($matches[0], $hresume, $content);
+}
+
+// Developers: This function can be used in your Wordpress templates
+function lnhr_get_hresume($url, $caching = false) {
 	$hresume = '';
-	if ($lnhr_enable_cache) {
+	if ($caching) {
 		$cache = get_option('lnhr_cache');
 		if ($cache !== false) {
-			list($expiry, $data) = $cache;
-			if ($expiry > time()) {
+			list($cache_url, $expiry, $data) = $cache;
+			if ($url == $cache_url && $expiry > time()) {
 				$hresume = $data;
 			}
 		}
 	}
 
 	if (!$hresume) {
-		$hresume = lnhr_get_linkedin_page();
+		$hresume = lnhr_get_linkedin_page($url);
+		lnhr_error_check($hresume, $url);
 		$hresume = lnhr_stripout_hresume($hresume);
 
 		$hresume = balanceTags($hresume, true);
 	
-		if ($lnhr_enable_cache) {
-			update_option('lnhr_cache', array(time()+21600, $hresume));
+		if ($caching) {
+			update_option('lnhr_cache', array($url, time()+21600, $hresume));
 		}
 	}
 	
-	return str_replace($matches[0], $hresume, $content);
+	return $hresume;
 }
 
-function lnhr_get_linkedin_page() {
-	global $linkedin_url;
+function lnhr_is_caching($value) {
+	return (in_array($value, explode(',', 'on,true,1')));
+}
 
+function lnhr_get_linkedin_page($url) {
 	// Request the LinkedIn page
 	if(function_exists('wp_remote_fopen'))
     {
-        $data = wp_remote_fopen($linkedin_url);
+        $data = wp_remote_fopen($url);
     }
 	else {
 		$data = "Sorry, your version of Wordpress does not support the 'wp_remote_fopen' function. Please upgrade your version of Wordpress.";
@@ -88,6 +111,22 @@ function lnhr_format_block($matches) {
 	$desc = wpautop($desc);
 	
 	return '<div class="' . $matches[1] . '">' . $desc . '</div>';
+}
+
+function lnhr_error_check($content, $url) {
+	$pos = strpos($content, '<div class="hresume">');
+	if ($pos === false) {
+		$pos = strpos($content, 'Profile Not Found');
+		if ($pos !== false) {
+			wp_die('<h1>Profile Not Found</h1><p>The profile <a href="' . $url . '">' . $url . '</a> could not be found.</p>');
+		}
+		elseif (preg_match('@<body class="public-profile">(.*?)</body>@s', $content, $matches)) {
+			wp_die($matches[1]);
+		}
+		else {
+			wp_die('<h1>Communication Error</h1><p>There was an error retrieving your LinkedIn public profile.</p>');
+		}
+	}
 }
 
 function lnhr_stripout_hresume($content) {
@@ -133,4 +172,5 @@ function lnhr_stripout_hresume($content) {
 }
 
 add_filter('the_content', 'lnhr_callback', 50);
+add_shortcode('lnhr', 'lnhr_shortcode');
 ?>

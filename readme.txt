@@ -2,8 +2,8 @@
 Contributors: bradt
 Tags: linkedin, resume, hresume, microformat, cv
 Requires at least: 2.0.0
-Tested up to: 2.7.2
-Stable tag: 0.2
+Tested up to: 2.7.1
+Stable tag: 0.3
 
 Include your LinkedIn resume in any Wordpress page and style it how you like.
 
@@ -13,25 +13,26 @@ LinkedIn hResume for Wordpress grabs the [hResume microformat](http://microforma
 block from your LinkedIn public profile page allowing you to add it to any Wordpress page and apply 
 your own styles to it.
 
-<strong>New in version 0.2 - 2009-04-12</strong>
+**New in version 0.3 - 2009-04-14**
 
-* Use of balanceTags to ensure stripped markup does not affect theme layout
-* Now full support for Markdown syntax and using a proper Markdown library
-* Setting the LinkedIn profile URL can now be done in the short tag. No need to edit the plugin file anymore.
-* Added caching support
+* Added proper [Wordpress shortcode](http://codex.wordpress.org/Shortcode_API) support
+* Added function *lnhr&#95;get&#95;hresume* function for use in Wordpress templates
+* Added some error checking
 
 == Installation ==
 
 1. Set your LinkedIn public profile to "Full View"<br />
    (default is "Basic View")
-2. Download linkedin-hresume.<version>.zip
+2. Download linkedin-hresume.*&lt;version&gt;*.zip
 3. Unzip the archive
-4. Upload the linkedin-hresume folder to your wp-content/plugins directory
+4. Upload the *linkedin-hresume* folder to your *wp-content/plugins* directory
 5. Activate the plugin in the WordPress Admin
 6. In the Wordpress Admin, create a new page containing:<br />
-   `&lt;!--LinkedIn hResume [your Linkedin public profile URL],[caching on]--&gt;`
+   [lnhr url="*&lt;your Linkedin public profile URL&gt;*" caching="*on|off*"]
 
-Example: &lt;!--LinkedIn hResume http://www.linkedin.com/in/bradt,true--&gt;<br />
+**Example**
+
+[lnhr url="http://www.linkedin.com/in/bradt" caching="on"]<br />
 This will display my resume with caching turned on.
 
 == Screenshots ==
@@ -52,18 +53,24 @@ in the `extras` folder.
 
 == Release Notes ==
 
-<strong>0.2 - 2009-04-12</strong>
+**0.3 - 2009-04-14**
+
+* Added proper [Wordpress shortcode](http://codex.wordpress.org/Shortcode_API) support
+* Added function *lnhr&#95;get&#95;hresume* function for use in Wordpress templates
+* Added some error checking
+
+**0.2 - 2009-04-12**
 
 * Use of balanceTags to ensure stripped markup does not affect theme layout
 * Now full support for Markdown syntax and using a proper Markdown library
 * Setting the LinkedIn profile URL can now be done in the short tag. No need to edit the plugin file anymore.
 * Added caching support
 
-<strong>0.1.1 - 2007-10-01</strong>
+**0.1.1 - 2007-10-01**
 
 * Bug Fix: Now works even if the public profile does not display contact settings.<br />
 * Fixed some CSS issues
 
-<strong>0.1 - 2007-02-27</strong>
+**0.1 - 2007-02-27**
 
 * First release.
