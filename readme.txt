@@ -3,7 +3,7 @@ Contributors: bradt
 Tags: linkedin, resume, hresume, microformat, cv
 Requires at least: 2.0.0
 Tested up to: 2.7.1
-Stable tag: 0.3
+Stable tag: 0.3.1
 
 Include your LinkedIn resume in any Wordpress page and style it how you like.
 
@@ -39,7 +39,7 @@ This will display my resume with caching turned on.
 
 The following are live demos:
 
-* [Aadesh Mistry](http://www.idizyn.com/blog/resume/)
+* [Chris Bernard](http://chrisbenard.net/resume/)
 * [Brad Touesnard](http://bradt.ca/resume/)
 
 Post your resume URL on the [support forum](http://wordpress.org/tags/linkedin-hresume) and I will add it to the list.
@@ -51,26 +51,33 @@ need to apply some custom CSS.  I've also used a [Wordpress page template](http:
 to get rid of the sidebar, header, etc.  My CSS and page template are included in the plugin download 
 in the `extras` folder.
 
-== Release Notes ==
+== Changelog ==
 
-**0.3 - 2009-04-14**
+= 0.3.1 - 2009-07-22 =
+
+* Format honors and notes blocks
+* Bug fix: groups and company links broken
+* Bug fix: trim block before formatting
+* Thanks to [Chris Bernard](http://chrisbenard.net/) for submitting all of these as a patch
+
+= 0.3 - 2009-04-14 =
 
 * Added proper [Wordpress shortcode](http://codex.wordpress.org/Shortcode_API) support
 * Added function *lnhr&#95;get&#95;hresume* function for use in Wordpress templates
 * Added some error checking
 
-**0.2 - 2009-04-12**
+= 0.2 - 2009-04-12 =
 
 * Use of balanceTags to ensure stripped markup does not affect theme layout
 * Now full support for Markdown syntax and using a proper Markdown library
 * Setting the LinkedIn profile URL can now be done in the short tag. No need to edit the plugin file anymore.
 * Added caching support
 
-**0.1.1 - 2007-10-01**
+= 0.1.1 - 2007-10-01 =
 
 * Bug Fix: Now works even if the public profile does not display contact settings.<br />
 * Fixed some CSS issues
 
-**0.1 - 2007-02-27**
+= 0.1 - 2007-02-27 =
 
 * First release.

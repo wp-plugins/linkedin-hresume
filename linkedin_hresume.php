@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/linkedin-hresume/
 Description: LinkedIn hResume grabs the Microformated hResume block from your LinkedIn public profile page allowing you to add it to any page and apply your own styles to it.
 Author: Brad Touesnard
 Author URI: http://bradt.ca/
-Version: 0.3
+Version: 0.3.1
 */
 
 // Your public LinkedIn profile URL 
@@ -103,6 +103,7 @@ function lnhr_format_block($matches) {
 	$desc = $matches[2];
 	
 	$desc = strip_tags($desc);
+	$desc = trim($desc);
 	$desc = Markdown($desc);
 		
 	// Make links clickable
@@ -151,8 +152,13 @@ function lnhr_stripout_hresume($content) {
 
 	$hresume = preg_replace_callback('@<p class="(description)">(.*?)</p>@s', 'lnhr_format_block', $hresume);
 	$hresume = preg_replace_callback('@<p class="(skills)">(.*?)</p>@s', 'lnhr_format_block', $hresume);
+	$hresume = preg_replace_callback('@<p class="(honors)">(.*?)</p>@s', 'lnhr_format_block', $hresume);
+	$hresume = preg_replace_callback('@<p class="(notes)">(.*?)</p>@s', 'lnhr_format_block', $hresume);
+
+	// Make the links clickable for groups and companies
+	$hresume = preg_replace_callback('@<a href="(/.*?)"@s', 'lnhr_format_link', $hresume, -1, $count);
 	
-	// Markup abbrivations INCOMPLETE
+	// Markup abbrevations INCOMPLETE
 	$hresume = preg_replace('/([^a-zA-Z0-9])(CVS)([^a-zA-Z0-9])/', '$1<abbr title="Concurrent Versioning System">$2</abbr>$3', $hresume);
 	
 	// Convert LinkedIn tags to XHTML
@@ -169,6 +175,17 @@ function lnhr_stripout_hresume($content) {
 	}
 	
 	return $hresume;
+}
+
+function lnhr_format_link($matches) {
+	$linktext = $matches[1];
+
+	if (substr($linktext, 0, 1) == '/')
+	{
+		$linktext = 'http://www.linkedin.com' . $linktext;
+	}
+
+	return '<a href="' . $linktext . '"';
 }
 
 add_filter('the_content', 'lnhr_callback', 50);
