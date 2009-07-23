@@ -39,7 +39,7 @@ This will display my resume with caching turned on.
 
 The following are live demos:
 
-* [Chris Bernard](http://chrisbenard.net/resume/)
+* [Chris Benard](http://chrisbenard.net/resume/)
 * [Brad Touesnard](http://bradt.ca/resume/)
 
 Post your resume URL on the [support forum](http://wordpress.org/tags/linkedin-hresume) and I will add it to the list.
@@ -58,7 +58,7 @@ in the `extras` folder.
 * Format honors and notes blocks
 * Bug fix: groups and company links broken
 * Bug fix: trim block before formatting
-* Thanks to [Chris Bernard](http://chrisbenard.net/) for submitting all of these as a patch
+* Thanks to [Chris Benard](http://chrisbenard.net/) for submitting all of these as a patch
 
 = 0.3 - 2009-04-14 =
 
