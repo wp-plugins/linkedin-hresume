@@ -2,8 +2,8 @@
 Contributors: bradt
 Tags: linkedin, resume, hresume, microformat, cv
 Requires at least: 2.0.0
-Tested up to: 2.7.1
-Stable tag: 0.3.1
+Tested up to: 2.9
+Stable tag: 0.3.2
 
 Include your LinkedIn resume in any Wordpress page and style it how you like.
 
@@ -35,7 +35,7 @@ your own styles to it.
 [lnhr url="http://www.linkedin.com/in/bradt" caching="on"]<br />
 This will display my resume with caching turned on.
 
-== Screenshots ==
+== Demos ==
 
 The following are live demos:
 
@@ -52,6 +52,10 @@ to get rid of the sidebar, header, etc.  My CSS and page template are included i
 in the `extras` folder.
 
 == Changelog ==
+
+= 0.3.2 - 2009-12-31 =
+
+* Bug fix: increased timeout
 
 = 0.3.1 - 2009-07-22 =
 

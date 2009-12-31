@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/linkedin-hresume/
 Description: LinkedIn hResume grabs the Microformated hResume block from your LinkedIn public profile page allowing you to add it to any page and apply your own styles to it.
 Author: Brad Touesnard
 Author URI: http://bradt.ca/
-Version: 0.3.1
+Version: 0.3.2
 */
 
 // Your public LinkedIn profile URL 
@@ -88,9 +88,22 @@ function lnhr_is_caching($value) {
 
 function lnhr_get_linkedin_page($url) {
 	// Request the LinkedIn page
-	if(function_exists('wp_remote_fopen'))
+	if(function_exists('wp_remote_get'))
     {
-        $data = wp_remote_fopen($url);
+		$parsed_url = @parse_url( $url );
+	
+		if ( !$parsed_url || !is_array( $parsed_url ) )
+			$data = "Invalid LinkedIn URL.";
+
+		$options = array();
+		$options['timeout'] = 100;
+	
+		$response = wp_remote_get( $url, $options );
+	
+		if ( is_wp_error( $response ) )
+			return false;
+	
+		$data = $response['body'];
     }
 	else {
 		$data = "Sorry, your version of Wordpress does not support the 'wp_remote_fopen' function. Please upgrade your version of Wordpress.";
