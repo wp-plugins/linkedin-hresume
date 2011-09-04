@@ -1,5 +1,6 @@
 === LinkedIn hResume ===
 Contributors: bradt
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5VPMGLLK94XJC
 Tags: linkedin, resume, hresume, microformat, cv
 Requires at least: 2.0.0
 Tested up to: 2.9
@@ -8,6 +9,9 @@ Stable tag: 0.3.2
 Include your LinkedIn resume in any Wordpress page and style it how you like.
 
 == Description ==
+
+**This plugin is no longer in active development and may be broken. If you are interested in taking
+over development, please post a note in [the forum](http://wordpress.org/tags/linkedin-hresume).**
 
 LinkedIn hResume for Wordpress grabs the [hResume microformat](http://microformats.org/wiki/hresume) 
 block from your LinkedIn public profile page allowing you to add it to any Wordpress page and apply 
